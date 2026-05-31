@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+  <title>Create Account · AURORA DEV</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+    
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      /* Ảnh nền đồng bộ với trang Login */
+      background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1531366936337-7c912a4589a7?q=80&w=2564&auto=format&fit=crop') no-repeat center center;
+      background-size: cover;
+      background-attachment: fixed;
+    }
+
+    /* Khung Kính mờ (Glassmorphism) */
+    .register-box {
+      position: relative;
+      width: 420px;
+      padding: 45px 40px; 
+      background: rgba(255, 255, 255, 0.12); 
+      border: 1px solid rgba(255, 255, 255, 0.3); 
+      border-radius: 20px;
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    }
+
+    h2 {
+      font-size: 28px;
+      font-weight: 600;
+      color: #fff;
+      text-align: center;
+      margin-bottom: 5px;
+      letter-spacing: 1px;
+    }
+
+    .sub-text {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 12px;
+      text-align: center;
+      margin-bottom: 30px;
+      font-weight: 300;
+    }
+
+    .sub-text span {
+      color: #06b6d4;
+      font-weight: 500;
+    }
+
+    /* Định dạng ô nhập liệu */
+    .input-box {
+      position: relative;
+      width: 100%;
+      margin-bottom: 25px; /* Thu gọn lại so với login để nhét vừa 4 ô */
+      border-bottom: 1.5px solid rgba(255, 255, 255, 0.8);
+    }
+
+    .input-box input {
+      width: 100%;
+      height: 40px;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-size: 15px;
+      color: #fff;
+      padding: 0 35px 0 5px;
+      font-weight: 400;
+    }
+
+    .input-box input::placeholder {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 13px;
+    }
+
+    .input-box .icon {
+      position: absolute;
+      right: 5px;
+      top: 10px;
+      color: #fff;
+      font-size: 18px;
+    }
+
+    /* Nút bấm Đăng ký */
+    .btn {
+      width: 100%;
+      height: 45px;
+      background: #fff;
+      border: none;
+      outline: none;
+      border-radius: 40px;
+      cursor: pointer;
+      font-size: 16px;
+      color: #000;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      transition: 0.3s ease;
+      box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+      margin-top: 15px;
+    }
+    .btn:hover {
+      background: rgba(255,255,255,0.9);
+      box-shadow: 0 4px 20px rgba(255, 255, 255, 0.4);
+      transform: translateY(-2px);
+    }
+
+    /* Chuyển hướng Login */
+    .login-link {
+      font-size: 13px;
+      color: #fff;
+      text-align: center;
+      margin-top: 25px;
+      font-weight: 300;
+    }
+
+    .login-link p a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: 600;
+      margin-left: 5px;
+      transition: color 0.3s;
+    }
+
+    .login-link p a:hover {
+      text-decoration: underline;
+      color: #06b6d4;
+    }
+
+    /* Hiển thị lỗi */
+    .msg {
+      margin-top: 15px;
+      color: #ffb3b3;
+      font-size: 13px;
+      text-align: center;
+      min-height: 20px;
+    }
+
+    /* Responsive cho điện thoại */
+    @media (max-width: 480px) {
+      .register-box {
+        width: 90%;
+        padding: 35px 25px; 
+      }
+      h2 {
+        font-size: 26px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="register-box">
+    <div style="width: 100%;">
+      <h2>Create Account</h2>
+      <div class="sub-text">Normal User Get Only 1 Server Free<br>Concat <span>@S_ZU_01</span></div>
+
+      <div class="input-box">
+        <input type="text" id="u" placeholder="Username (letters, numbers, _ , .)" autocomplete="off">
+        <span class="icon"><ion-icon name="person-outline"></ion-icon></span>
+      </div>
+
+      <div class="input-box">
+        <input type="email" id="e" placeholder="Email Address" autocomplete="off">
+        <span class="icon"><ion-icon name="mail-outline"></ion-icon></span>
+      </div>
+
+      <div class="input-box">
+        <input type="password" id="p" placeholder="Password (min 6 characters)">
+        <span class="icon"><ion-icon name="lock-closed-outline"></ion-icon></span>
+      </div>
+
+      <div class="input-box">
+        <input type="password" id="p2" placeholder="Re-enter password">
+        <span class="icon"><ion-icon name="shield-checkmark-outline"></ion-icon></span>
+      </div>
+
+      <button type="button" class="btn" onclick="doCreate()">Register</button>
+      
+      <div class="msg" id="m"></div>
+
+      <div class="login-link">
+        <p>Already have an account? <a href="/login">Login</a></p>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // Chức năng Register giữ nguyên logic gốc
+  async function doCreate(){
+    const m = document.getElementById('m');
+    m.style.color = '#ffb3b3'; // Đặt lại màu đỏ phòng trường hợp lỗi
+    m.textContent = 'Creating account...';
+
+    const username = document.getElementById('u').value.trim();
+    const email = document.getElementById('e').value.trim();
+    const password = document.getElementById('p').value;
+    const password2 = document.getElementById('p2').value;
+
+    if(!username || !email || !password || !password2) {
+      m.textContent = 'Please fill out all fields.';
+      return;
+    }
+    if(password !== password2) {
+      m.textContent = 'Passwords do not match.';
+      return;
+    }
+
+    try {
+      const r = await fetch('/api/auth/create', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({username, email, password, password2})
+      });
+      const d = await r.json().catch(()=>({success:false, message:'Server error'}));
+      
+      if(!r.ok || !d.success){
+        m.textContent = d.message || 'Create failed';
+        return;
+      }
+      
+      // Nếu thành công thì đổi màu chữ xanh và chuyển hướng
+      m.style.color = '#7CFF7C';
+      m.textContent = 'Created ✅ Redirecting to login...';
+      setTimeout(() => location.href = '/login', 800);
+    } catch(e) {
+      m.textContent = 'Connection error.';
+    }
+  }
+</script>
+</body>
+</html>

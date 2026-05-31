@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+  <title>Login · AURORA DEV</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+    body {
+      display: flex; justify-content: center; align-items: center; min-height: 100vh;
+      background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1531366936337-7c912a4589a7?q=80&w=2564&auto=format&fit=crop') no-repeat center center;
+      background-size: cover; background-attachment: fixed;
+    }
+    .login-box {
+      position: relative; width: 400px; padding: 50px 40px; 
+      background: rgba(255, 255, 255, 0.12); border: 1px solid rgba(255, 255, 255, 0.3); 
+      border-radius: 20px; backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    }
+    h2 { font-size: 28px; font-weight: 600; color: #fff; text-align: center; margin-bottom: 35px; letter-spacing: 1px; }
+    .input-box { position: relative; width: 100%; margin-bottom: 35px; border-bottom: 1.5px solid rgba(255, 255, 255, 0.8); }
+    .input-box input { width: 100%; height: 40px; background: transparent; border: none; outline: none; font-size: 15px; color: #fff; padding: 0 35px 0 5px; font-weight: 400; }
+    .input-box input::placeholder { color: rgba(255, 255, 255, 0.7); font-size: 14px; }
+    .input-box .icon { position: absolute; right: 5px; top: 10px; color: #fff; font-size: 18px; }
+    .input-box .toggle-pwd { cursor: pointer; }
+    .btn {
+      width: 100%; height: 45px; background: #fff; border: none; outline: none; border-radius: 40px;
+      cursor: pointer; font-size: 16px; color: #000; font-weight: 600; letter-spacing: 0.5px;
+      transition: 0.3s ease; box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2); margin-top: 10px;
+    }
+    .btn:hover { background: rgba(255,255,255,0.9); box-shadow: 0 4px 20px rgba(255, 255, 255, 0.4); transform: translateY(-2px); }
+    .register-link { font-size: 13px; color: #fff; text-align: center; margin-top: 30px; font-weight: 300; }
+    .register-link p a { color: #fff; text-decoration: none; font-weight: 600; margin-left: 5px; transition: color 0.3s; }
+    .register-link p a:hover { text-decoration: underline; color: #06b6d4; }
+    .msg { margin-top: 15px; color: #ffb3b3; font-size: 13px; text-align: center; min-height: 20px; }
+    @media (max-width: 480px) { .login-box { width: 90%; padding: 40px 25px; } h2 { font-size: 26px; margin-bottom: 30px; } }
+  </style>
+</head>
+<body>
+  <div class="login-box">
+    <div style="width: 100%;">
+      <h2>Login</h2>
+      <div class="input-box">
+        <input type="text" id="u" placeholder="Username" autocomplete="username">
+        <span class="icon"><ion-icon name="person-outline"></ion-icon></span>
+      </div>
+      <div class="input-box">
+        <input type="password" id="p" placeholder="Password" autocomplete="current-password">
+        <span class="icon toggle-pwd" onclick="togglePassword()">
+          <ion-icon name="eye-off-outline" id="eye-icon"></ion-icon>
+        </span>
+      </div>
+      <button type="submit" class="btn" onclick="doLogin()">Login</button>
+      <div class="msg" id="m"></div>
+      <div class="register-link">
+        <p>Don't have an account? <a href="/create">Register</a></p>
+      </div>
+    </div>
+  </div>
+<script>
+  async function doLogin(){
+    const m = document.getElementById('m'); m.textContent = 'Logging in...';
+    const username = document.getElementById('u').value.trim();
+    const password = document.getElementById('p').value;
+    if(!username || !password) { m.textContent = 'Please fill out all fields.'; return; }
+    try {
+      const r = await fetch('/api/auth/login',{ method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({username,password}) });
+      const d = await r.json().catch(()=>({success:false, message:'Server error'}));
+      if(!r.ok || !d.success){ m.textContent = d.message || 'Login failed'; return; }
+      location.href = d.is_admin ? '/admin' : '/';
+    } catch (e) { m.textContent = 'Connection error.'; }
+  }
+  function togglePassword() {
+    const pwdInput = document.getElementById('p'); const eyeIcon = document.getElementById('eye-icon');
+    if (pwdInput.type === 'password') { pwdInput.type = 'text'; eyeIcon.setAttribute('name', 'eye-outline'); }
+    else { pwdInput.type = 'password'; eyeIcon.setAttribute('name', 'eye-off-outline'); }
+  }
+</script>
+</body>
+</html>
