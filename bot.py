@@ -96,7 +96,27 @@ def log_append(owner: str, folder: str, text: str):
     except Exception:
         pass
 
-
+def read_tail_logs(file_path: str, max_bytes=50000):
+    """
+    Chỉ đọc max_bytes cuối cùng của file để chống tràn RAM.
+    50000 bytes ~ 50KB (đủ cho khoảng 500-1000 dòng log).
+    """
+    if not os.path.exists(file_path):
+        return ""
+    try:
+        size = os.path.getsize(file_path)
+        with open(file_path, "rb") as f:
+            if size > max_bytes:
+                # Tua con trỏ chuột đến sát cuối file
+                f.seek(-max_bytes, os.SEEK_END)
+                # Đọc và bỏ qua dòng đầu tiên vì có thể bị cắt ngang dở dang
+                content = f.read().decode("utf-8", errors="ignore")
+                return "[... Log quá dài, chỉ hiển thị 50KB mới nhất ...]\n" + content.split("\n", 1)[-1]
+            else:
+                return f.read().decode("utf-8", errors="ignore")
+    except Exception:
+        return ""
+        
 # ---------------------------
 # Users DB
 # ---------------------------
@@ -413,8 +433,10 @@ while True:
 
 
 def stop_proc(internal_key: str):
-    if internal_key in running_procs:
-        proc, logf = running_procs[internal_key]
+    with lock:
+        proc_tuple = running_procs.get(internal_key)
+    if proc_tuple:
+        proc, logf = proc_tuple
         try:
             p = psutil.Process(proc.pid)
             for child in p.children(recursive=True):
@@ -426,7 +448,8 @@ def stop_proc(internal_key: str):
             logf.close()
         except Exception:
             pass
-        running_procs.pop(internal_key, None)
+        with lock:
+            running_procs.pop(internal_key, None)
 
 
 # ---------------------------
@@ -661,12 +684,10 @@ def server_stats(key):
         return jsonify({"success": False, "message": "Forbidden"}), 403
 
     owner, folder = parse_server_key(key, allow_admin=True)
+    internal_key = f"{owner}::{folder}"  # ✅ FIX: chuẩn hóa key
     server_dir = get_server_dir(owner, folder)
-    
-    internal_key = f"{owner}::{folder}" # ĐÃ FIX: Chuẩn hóa key
-
     if not os.path.isdir(server_dir):
-        return jsonify({"status": "Offline", "cpu": "0%", "mem": "0 MB", "logs": "", "ip": get_ip()}), 404
+        return jsonify({"status": "Offline", "cpu": "0%", "mem": "0 MB", "logs": "", "ip": get_ip(), "uptime": "Offline"}), 404
 
     meta = read_meta(owner, folder)
     if meta.get("banned", False):
@@ -675,6 +696,7 @@ def server_stats(key):
     proc_tuple = running_procs.get(internal_key)
     running = False
     cpu, mem = "0%", "0 MB"
+    uptime_str = "Offline"
 
     if proc_tuple:
         proc, _logf = proc_tuple
@@ -685,15 +707,25 @@ def server_stats(key):
                     running = True
                     cpu = f"{p.cpu_percent(interval=None)}%"
                     mem = f"{p.memory_info().rss / 1024 / 1024:.1f} MB"
+                    
+                    # ✅ TÍNH TOÁN UPTIME (THỜI GIAN SERVER CHẠY)
+                    uptime_sec = int(time.time() - p.create_time())
+                    days = uptime_sec // 86400
+                    hours = (uptime_sec % 86400) // 3600
+                    mins = (uptime_sec % 3600) // 60
+                    secs = uptime_sec % 60
+                    if days > 0:
+                        uptime_str = f"{days}d {hours}h {mins}m"
+                    else:
+                        uptime_str = f"{hours}h {mins}m {secs}s"
             except Exception:
                 pass
 
+    # ✅ ĐỌC LOG TỐI ƯU (Tránh bị sập VPS khi file log quá to)
     log_path = os.path.join(server_dir, "server.log")
-    try:
-        logs = open(log_path, "r", encoding="utf-8", errors="ignore").read() if os.path.exists(log_path) else ""
-    except Exception:
-        logs = ""
+    logs = read_tail_logs(log_path)
 
+    # Cập nhật trạng thái
     state = get_state(internal_key)
     if meta.get("banned", False):
         state = "Banned"
@@ -704,8 +736,8 @@ def server_stats(key):
         state = "Offline"
         set_state(internal_key, "Offline")
 
-    return jsonify({"status": state, "cpu": cpu, "mem": mem, "logs": logs, "ip": get_ip()})
-
+    # Trả về tất cả dữ liệu cho giao diện Web
+    return jsonify({"status": state, "cpu": cpu, "mem": mem, "logs": logs, "ip": get_ip(), "uptime": uptime_str})
 
 def background_start(internal_key: str, owner: str, folder: str, startup_file: str):
     try:
@@ -718,7 +750,8 @@ def background_start(internal_key: str, owner: str, folder: str, startup_file: s
         log_append(owner, folder, "[SYSTEM] Starting...\n")
 
         proc, logf = start_with_autoinstall(owner, folder, startup_file)
-        running_procs[internal_key] = (proc, logf)
+        with lock:
+            running_procs[internal_key] = (proc, logf)
 
         time.sleep(1.0)
         if proc.poll() is None:
@@ -1138,5 +1171,5 @@ def admin_quickstats():
 
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", os.environ.get("SERVER_PORT", 8008)))
+    port = int(os.environ.get("SERVER_PORT", 8008))
     app.run(host="0.0.0.0", port=port)

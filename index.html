@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
-  <title>AURORA DEV Panel</title>
+  <title>Senzu Hosting Python</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,184 +11,137 @@
 
   <style>
     :root {
-      --bg0: #020617; --bg1: #0f172a; --glass: rgba(255, 255, 255, 0.04);
-      --glass-hover: rgba(255, 255, 255, 0.08); --border: rgba(255, 255, 255, 0.08);
-      --border-hover: rgba(6, 182, 212, 0.4); --muted: #94a3b8; --text: #f8fafc;
-      --accent: #06b6d4; --accent-glow: rgba(6, 182, 212, 0.3); --accent2: #8b5cf6;
+      --bg0: #0f111a; --bg1: #151822; --glass: rgba(255, 255, 255, 0.03);
+      --border: rgba(255, 255, 255, 0.06);
+      --accent: #2563eb; --accent-glow: rgba(37, 99, 235, 0.3);
       --danger: #ef4444; --ok: #10b981; --warn: #f59e0b;
-      --shadow: 0 20px 40px -15px rgba(0,0,0,0.7); --radius: 16px; --radius-sm: 10px;
+      --muted: #64748b; --text: #f8fafc;
+      --shadow: 0 10px 30px -10px rgba(0,0,0,0.8); 
+      --radius: 12px; --radius-sm: 8px;
     }
     * { box-sizing: border-box; } html, body { height: 100%; }
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: var(--bg0); }
     ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
-    ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
     body {
-      margin: 0; color: var(--text); font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      margin: 0; color: var(--text); font-family: 'Inter', system-ui, sans-serif;
       background: var(--bg0);
-      background-image: radial-gradient(circle at 15% 50%, rgba(6, 182, 212, 0.08), transparent 25%), radial-gradient(circle at 85% 30%, rgba(139, 92, 246, 0.08), transparent 25%);
-      overflow-x: hidden; -webkit-font-smoothing: antialiased;
+      -webkit-font-smoothing: antialiased;
     }
-    .topbar { position: sticky; top: 0; z-index: 20; background: rgba(2, 6, 23, 0.7); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); }
+    
+    .topbar { position: sticky; top: 0; z-index: 20; background: rgba(15, 17, 26, 0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
     .topbar-inner { max-width: 1200px; margin: 0 auto; padding: 12px 20px; display: flex; gap: 12px; align-items: center; justify-content: space-between; }
     .brand { display: flex; align-items: center; gap: 14px; }
-    
-    /* ĐÃ SỬA: Thay đổi .brand .logo sử dụng ảnh nền thay vì tia sét */
-    .brand .logo { width: 42px; height: 42px; border-radius: var(--radius-sm); cursor: pointer; flex-shrink: 0; background: url('https://i.postimg.cc/9MK8dyXJ/hinh-nen-anime-44.jpg') no-repeat center; background-size: cover; box-shadow: 0 4px 20px var(--accent-glow); transition: transform 0.2s ease; }
-    .brand .logo:hover { transform: scale(1.05) rotate(-5deg); }
-    
-    .brand .title { color: var(--text); font-size: 16px; font-weight: 800; letter-spacing: 0.5px; background: linear-gradient(to right, #fff, #cbd5e1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .brand .sub { display: block; font-weight: 500; color: var(--accent); font-size: 12px; margin-top: 4px; word-break: break-all; }
-    .actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-    .btn { border: 1px solid var(--border); background: var(--glass); color: var(--text); padding: 10px 18px; border-radius: var(--radius-sm); cursor: pointer; font-weight: 600; font-size: 13px; transition: all 0.2s ease; font-family: inherit; text-align: center; }
-    .btn:hover { transform: translateY(-2px); border-color: rgba(255,255,255,0.2); background: var(--glass-hover); }
-    .btn-primary { background: var(--text); color: var(--bg0); border: 1px solid #fff; }
-    .btn-primary:hover { background: #e2e8f0; box-shadow: 0 8px 20px rgba(255,255,255,0.15); }
-    .btn-danger { background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3); color: #fca5a5; }
-    .btn-danger:hover { background: rgba(239, 68, 68, 0.2); border-color: rgba(239, 68, 68, 0.5); color: #fff; }
-    .btn-mini { padding: 8px 12px; font-size: 12px; }
-    .container { max-width: 1200px; margin: 30px auto 60px; padding: 0 20px; animation: fadeIn 0.4s ease; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
-    .card { background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); cursor: pointer; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; position: relative; }
-    .card::before { content: ""; position: absolute; inset: 0; border-radius: inherit; background: radial-gradient(800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255,255,255,0.06), transparent 40%); opacity: 0; transition: opacity 0.3s; }
-    .card:hover { transform: translateY(-4px); border-color: var(--border-hover); box-shadow: 0 20px 40px rgba(0,0,0,0.8), 0 0 20px var(--accent-glow); }
-    .card:hover::before { opacity: 1; }
-    .srv-title { font-weight: 800; font-size: 16px; margin: 0; color: #fff; }
-    .srv-sub { margin-top: 8px; color: var(--muted); font-size: 13px; line-height: 1.5; flex-grow: 1; }
-    .pill { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 99px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); font-size: 11px; font-weight: 700; letter-spacing: 0.5px; margin-top: 16px; text-transform: uppercase; align-self: flex-start; }
-    .dot { width: 8px; height: 8px; border-radius: 50%; box-shadow: 0 0 8px currentColor; }
-    .pill.running { color: var(--ok); } .pill.running .dot { background: var(--ok); }
-    .pill.installing { color: var(--warn); } .pill.installing .dot { background: var(--warn); }
-    .pill.banned { color: var(--danger); } .pill.banned .dot { background: var(--danger); }
-    .pill.offline { color: var(--muted); } .pill.offline .dot { background: var(--muted); box-shadow: none; }
-    #serverView { display: none; }
-    .header-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
-    .hleft h1 { margin: 0; font-size: 28px; font-weight: 800; color: #fff; }
-    .hleft .muted { margin-top: 6px; color: var(--muted); font-size: 14px; }
-    .tabs { display: flex; gap: 8px; background: rgba(0,0,0,0.2); padding: 6px; border-radius: 12px; border: 1px solid var(--border); }
-    .tab { background: transparent; color: var(--muted); border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px; transition: all 0.2s; font-family: inherit; }
-    .tab:hover { color: #fff; }
-    .tab.active { background: rgba(255,255,255,0.1); color: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
-    .panel { border: 1px solid var(--border); background: rgba(15, 23, 42, 0.5); border-radius: var(--radius); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: var(--shadow); overflow: hidden; animation: fadeIn 0.3s ease; }
-    .grid-2 { display: grid; grid-template-columns: 1fr 300px; gap: 1px; background: var(--border); }
-    .grid-2 > div { background: #0f172a; padding: 20px; }
-    
-    .console-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px; }
-    .console-header span { font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing: 1px; }
+    .brand .logo { width: 40px; height: 40px; border-radius: var(--radius-sm); cursor: pointer; flex-shrink: 0; background: url('https://i.postimg.cc/9MK8dyXJ/hinh-nen-anime-44.jpg') no-repeat center; background-size: cover; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+    .brand .title { color: var(--text); font-size: 16px; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; }
+    .brand .sub { display: block; font-weight: 500; color: var(--accent); font-size: 11px; margin-top: 2px; }
+    .actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .btn { border: 1px solid var(--border); background: var(--glass); color: var(--text); padding: 8px 16px; border-radius: var(--radius-sm); cursor: pointer; font-weight: 600; font-size: 12px; transition: all 0.2s ease; display: flex; align-items: center; gap: 6px; }
+    .btn:hover { background: rgba(255,255,255,0.08); }
+    .btn-primary { background: #e2e8f0; color: #020617; border: none; }
+    .btn-primary:hover { background: #fff; }
+    .btn-danger { background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.2); color: #fca5a5; }
 
-    .console { background: #000; border-radius: var(--radius-sm); height: 530px; overflow-y: auto; overflow-x: hidden; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.6; white-space: pre-wrap; word-break: break-word; color: #a7f3d0; padding: 16px; box-shadow: inset 0 0 20px rgba(0,0,0,0.5); }
-    .console::-webkit-scrollbar-track { background: #000; }
+    .container { max-width: 1200px; margin: 30px auto 60px; padding: 0 20px; animation: fadeIn 0.3s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+    .card { background: var(--bg1); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); cursor: pointer; transition: all 0.2s ease; }
+    .card:hover { border-color: rgba(255,255,255,0.15); transform: translateY(-2px); }
+    .srv-title { font-weight: 800; font-size: 15px; margin: 0; color: #fff; }
+    .srv-sub { margin-top: 6px; color: var(--muted); font-size: 12px; }
+    .pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 6px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); font-size: 10px; font-weight: 700; margin-top: 14px; text-transform: uppercase; }
+    .dot { width: 6px; height: 6px; border-radius: 50%; }
+    .pill.running { color: var(--ok); } .pill.running .dot { background: var(--ok); box-shadow: 0 0 6px var(--ok); }
+    .pill.installing { color: var(--warn); } .pill.installing .dot { background: var(--warn); box-shadow: 0 0 6px var(--warn); }
+    .pill.banned { color: var(--danger); } .pill.banned .dot { background: var(--danger); box-shadow: 0 0 6px var(--danger); }
+    .pill.offline { color: var(--muted); } .pill.offline .dot { background: var(--muted); }
+
+    #serverView { display: none; }
     
-    .side { display: flex; flex-direction: column; gap: 12px; }
-    .btn-block { width: 100%; padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--glass); color: #fff; font-weight: 700; font-size: 13px; cursor: pointer; transition: all 0.2s ease; text-transform: uppercase; letter-spacing: 1px; }
-    .btn-block:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); }
-    .btn-block.primary { background: var(--accent); color: #000; border: none; }
-    .btn-block.primary:hover { background: #22d3ee; box-shadow: 0 8px 20px var(--accent-glow); }
-    .btn-block.danger { background: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.3); color: #fca5a5; }
-    .stat { background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 16px; display: flex; gap: 14px; align-items: center; }
-    .stat .ico { width: 42px; height: 42px; border-radius: 10px; display: grid; place-items: center; font-size: 20px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.05); }
-    .stat small { display: block; color: var(--muted); font-weight: 600; font-size: 11px; letter-spacing: 0.5px; text-transform: uppercase; }
-    .stat b { display: block; margin-top: 4px; font-size: 14px; font-weight: 600; color: #fff; word-break: break-all; }
-    #mainFileTxt { color: var(--accent); cursor: pointer; text-decoration: underline; text-underline-offset: 4px; }
-    #mainFileTxt:hover { color: #fff; }
-    .fm-top { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 20px; background: rgba(0,0,0,0.1); border-bottom: 1px solid var(--border); }
-    .path { color: var(--muted); font-size: 13px; margin-top: 8px; display: flex; align-items: center; flex-wrap: wrap; }
-    .crumb a { color: var(--accent); text-decoration: none; font-weight: 600; }
-    .crumb a:hover { color: #fff; }
-    .crumb .sep { color: rgba(255,255,255,0.2); padding: 0 8px; }
+    .action-bar { display: flex; gap: 10px; margin-bottom: 24px; flex-wrap: wrap; }
+    .btn-act { flex: 1; min-width: 100px; padding: 10px 14px; border: none; border-radius: 6px; font-weight: 700; font-size: 12px; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s ease; text-transform: uppercase; letter-spacing: 0.5px; }
+    .btn-act:hover { filter: brightness(1.1); transform: translateY(-1px); }
+    .btn-act:disabled { opacity: 0.5; cursor: not-allowed; transform: none; filter: none; }
+    .btn-act.start { background: #10b981; } 
+    .btn-act.stop { background: #ef4444; } 
+    .btn-act.restart { background: #f59e0b; } 
+    .btn-act.clear { background: #334155; } 
+
+    .tabs { display: flex; gap: 20px; border-bottom: 1px solid var(--border); margin-bottom: 20px; padding: 0 10px; overflow-x: auto; }
+    .tab { background: transparent; color: var(--muted); border: none; border-bottom: 2px solid transparent; padding: 12px 10px; cursor: pointer; font-weight: 600; font-size: 13px; transition: all 0.2s; white-space: nowrap; display: flex; align-items: center; gap: 8px; }
+    .tab:hover { color: #f8fafc; }
+    .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+    .grid-layout { display: flex; flex-direction: column; gap: 20px; }
     
+    .terminal-wrapper { background: #05070a; border-radius: var(--radius-sm); border: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; height: 480px; box-shadow: inset 0 0 20px rgba(0,0,0,0.5); }
+    .console { flex: 1; overflow-y: auto; overflow-x: hidden; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.6; white-space: pre-wrap; word-break: break-word; color: #cbd5e1; padding: 16px; }
+    .console::-webkit-scrollbar-track { background: transparent; }
+    
+    .cmd-box { display: flex; background: rgba(255,255,255,0.02); border-top: 1px solid var(--border); padding: 10px 14px; gap: 10px; align-items: center; }
+    .cmd-box .prompt { color: var(--ok); font-weight: 900; font-family: 'JetBrains Mono', monospace; }
+    .cmd-box input { flex: 1; background: transparent; border: none; color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 13px; outline: none; }
+    .cmd-box input::placeholder { color: rgba(255,255,255,0.2); font-style: italic; }
+    .cmd-box .btn-send { background: var(--accent); color: #fff; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 700; font-size: 11px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .cmd-box .btn-send:hover { background: #3b82f6; }
+
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 4px; }
+    .stat-card { background: var(--bg1); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 16px; display: flex; flex-direction: column; gap: 6px; box-shadow: var(--shadow); }
+    .stat-card .label { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+    .stat-card .val { font-size: 14px; font-weight: 600; color: #f8fafc; word-break: break-all; }
+    .stat-card .val a { color: #3b82f6; text-decoration: none; cursor: pointer; font-weight: 500; }
+    .stat-card .val a:hover { text-decoration: underline; color: #60a5fa; }
+
+    .fm-top { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 16px 20px; background: var(--bg1); border: 1px solid var(--border); border-radius: var(--radius-sm) var(--radius-sm) 0 0; }
+    .path { color: var(--text); font-size: 13px; display: flex; align-items: center; flex-wrap: wrap; font-family: 'JetBrains Mono', monospace; }
+    .crumb a { color: #2563eb; text-decoration: none; font-weight: 600; }
+    .crumb a:hover { text-decoration: underline; }
+    .crumb .sep { color: var(--muted); padding: 0 8px; }
+    
+    .table-wrapper { border: 1px solid var(--border); border-top: none; border-radius: 0 0 var(--radius-sm) var(--radius-sm); background: var(--bg1); overflow: hidden; }
     .table { width: 100%; border-collapse: collapse; text-align: left; }
-    .table th, .table td { padding: 16px; border-bottom: 1px solid var(--border); font-size: 14px; }
-    .table th { color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; font-size: 12px; background: rgba(0,0,0,0.2); }
-    .table tr:hover { background: rgba(255,255,255,0.03); }
-    .name-link { color: #e2e8f0; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 8px; }
-    .name-link:hover { color: var(--accent); }
+    .table th, .table td { padding: 14px 20px; border-bottom: 1px solid var(--border); font-size: 13px; }
+    .table th { color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; font-size: 11px; background: rgba(0,0,0,0.2); }
+    .table tr:last-child td { border-bottom: none; }
+    .table tr:hover { background: rgba(255,255,255,0.02); }
+    .name-link { color: #e2e8f0; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 10px; }
+    .name-link svg { color: var(--muted); }
+    .name-link:hover { color: #2563eb; }
+    .name-link:hover svg { color: #2563eb; }
     .row-actions { white-space: nowrap; text-align: right; }
     
     .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 50; padding: 20px; }
-    .modal { width: 100%; max-width: 400px; background: var(--bg1); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); padding: 24px; animation: fadeIn 0.2s ease; }
-    .modal h3 { margin: 0 0 16px 0; font-size: 18px; color: #fff; }
-    .modal input { width: 100%; padding: 14px; border-radius: var(--radius-sm); border: 1px solid rgba(255,255,255,0.15); background: rgba(0,0,0,0.3); color: #fff; font-family: inherit; font-size: 14px; transition: border 0.2s; }
-    .modal input:focus { outline: none; border-color: var(--accent); }
+    .modal { width: 100%; max-width: 380px; background: var(--bg1); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); padding: 24px; animation: fadeIn 0.2s ease; }
+    .modal h3 { margin: 0 0 16px 0; font-size: 16px; color: #fff; }
+    .modal input { width: 100%; padding: 12px 14px; border-radius: var(--radius-sm); border: 1px solid rgba(255,255,255,0.15); background: rgba(0,0,0,0.3); color: #fff; font-family: inherit; font-size: 13px; transition: border 0.2s; outline: none; }
+    .modal input:focus { border-color: #2563eb; }
     
-    #editor-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 60; padding: 20px; }
-    .editor { height: 100%; max-width: 1200px; margin: 0 auto; border-radius: var(--radius); border: 1px solid var(--border); background: #0f172a; box-shadow: var(--shadow); display: flex; flex-direction: column; overflow: hidden; animation: fadeIn 0.3s ease; }
-    .editor-top { padding: 16px 20px; border-bottom: 1px solid var(--border); background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
-    .editor-top .fn { font-weight: 700; color: #fff; display: flex; align-items: center; gap: 8px; word-break: break-all; }
-    
-    #ed-area { flex: 1; background: #000; color: #e2e8f0; border: 0; outline: none; padding: 20px; resize: none; font-family: 'JetBrains Mono', monospace; font-size: 14px; line-height: 1.6; white-space: pre; overflow-wrap: normal; overflow-x: auto; }
+    #editor-modal { display: none; position: fixed; inset: 0; background: #000; z-index: 60; }
+    .editor { width: 100%; height: 100%; display: flex; flex-direction: column; animation: fadeIn 0.2s ease; }
+    .editor-top { padding: 12px 20px; border-bottom: 1px solid var(--border); background: var(--bg1); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .editor-top .fn { font-weight: 600; color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 14px; }
+    #ed-area { flex: 1; background: #05070a; color: #cbd5e1; border: none; outline: none; padding: 20px; resize: none; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.6; white-space: pre; overflow-wrap: normal; overflow-x: auto; }
 
-    @media (max-width: 980px) { .grid-2 { grid-template-columns: 1fr; } }
-    
-    /* GIAO DIỆN DI ĐỘNG (MOBILE) TỐI ƯU TOÀN DIỆN */
     @media (max-width: 768px) {
-      .topbar-inner { flex-direction: column; align-items: stretch; padding: 14px 16px; }
-      .brand { justify-content: space-between; width: 100%; }
-      .actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 8px; width: 100%; margin-top: 4px; }
-      .btn { padding: 10px 8px; font-size: 12px; }
+      .topbar-inner { padding: 14px 16px; }
       .container { padding: 0 16px; margin: 20px auto 40px; }
-      .header-row { flex-direction: column; align-items: stretch; }
-      .tabs { display: grid; grid-template-columns: 1fr 1fr; width: 100%; }
-      .tab { text-align: center; padding: 10px; }
-      .grid-2 > div { padding: 16px; }
-      .console { height: 50vh; max-height: 400px; font-size: 11px; padding: 12px; }
-      .fm-top { flex-direction: column; align-items: stretch; }
-      
-      /* FILE MANAGER TỐI ƯU MOBILE */
+      .action-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 20px; }
+      .btn-act { width: 100%; padding: 12px 8px; font-size: 11px; }
+      .terminal-wrapper { height: 50vh; max-height: 420px; }
+      .console { font-size: 11.5px; padding: 12px; }
+      .cmd-box { padding: 10px; gap: 8px; }
+      .stats-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+      .stat-card { padding: 14px 12px; }
+      .stat-card .val { font-size: 13px; }
+      .fm-top { flex-direction: column; align-items: stretch; padding: 14px; }
       .table thead { display: none; }
-      .table tr { display: flex; flex-wrap: wrap; align-items: center; padding: 14px 12px; border-bottom: 1px solid var(--border); }
+      .table tr { display: flex; flex-wrap: wrap; align-items: center; padding: 14px; border-bottom: 1px solid var(--border); }
       .table td { padding: 0; border: none; }
-      .table td:nth-child(1) { width: 100%; margin-bottom: 12px; font-size: 14px; }
+      .table td:nth-child(1) { width: 100%; margin-bottom: 12px; font-size: 13px; }
       .table td:nth-child(2) { flex: 1; font-size: 12px; color: var(--muted); }
       .table td:nth-child(3) { display: flex; justify-content: flex-end; }
-      .row-actions { margin-top: 0; display: flex; gap: 6px; }
+      .row-actions { display: flex; gap: 6px; }
       .row-actions button { margin: 0; }
-      
-      /* CODE EDITOR TỐI ƯU MOBILE (FULL-SCREEN TRÀN VIỀN) */
-      #editor-modal { padding: 0 !important; background: #000; }
-      .editor { 
-        width: 100vw; 
-        height: 100vh; 
-        max-width: none; 
-        border-radius: 0; 
-        border: none; 
-        margin: 0; 
-        background: #050505; 
-      }
-      .editor-top { 
-        padding: 12px 14px; 
-        flex-direction: row; 
-        flex-wrap: nowrap; 
-        background: #0f172a; 
-      }
-      .editor-top .fn { 
-        font-size: 14px; 
-        white-space: nowrap; 
-        overflow: hidden; 
-        text-overflow: ellipsis; 
-        max-width: 45%; 
-        color: var(--accent);
-      }
-      .editor-top .actions { 
-        width: auto; 
-        display: flex; 
-        flex-wrap: nowrap; 
-        margin: 0; 
-        gap: 6px; 
-        justify-content: flex-end; 
-      }
-      .editor-top .actions button { 
-        padding: 8px 14px; 
-        font-size: 13px; 
-        border-radius: 8px; 
-      }
-      #ed-area { 
-        font-size: 11px; 
-        padding: 12px; 
-        width: 100%; 
-        box-sizing: border-box; 
-      }
     }
   </style>
 </head>
@@ -197,83 +150,124 @@
   <div class="topbar">
     <div class="topbar-inner">
       <div class="brand">
-        <div style="display:flex; align-items:center; gap:14px;">
-          <div class="logo" role="button" tabindex="0" title="Home" onclick="location.href='/'"></div>
-          <div>
-            <div class="title">HOSTING SERVER</div>
-            <span class="sub" id="pyHostTxt">Initializing core...</span>
-          </div>
+        <div class="logo" role="button" tabindex="0" title="Home" onclick="location.href='/'"></div>
+        <div>
+          <div class="title">Senzu Host</div>
+          <span class="sub" id="pyHostTxt">Initializing core...</span>
         </div>
       </div>
       <div class="actions">
         <button id="adminBtn" class="btn" style="display:none" onclick="location.href='/admin'">Admin</button>
         <button id="homeBtn" class="btn" style="display:none" onclick="goHome()">Dashboard</button>
-        <button id="newBtn" class="btn btn-primary">+ Deploy Server</button>
         <button class="btn btn-danger" onclick="location.href='/logout'">Logout</button>
       </div>
     </div>
   </div>
 
   <div class="container" id="homeView">
+    <div style="margin-bottom:20px; display:flex; justify-content:space-between; align-items:center;">
+      <h2 style="margin:0; font-size:18px;">Your Servers</h2>
+      <button id="newBtn" class="btn btn-primary" style="padding: 10px 16px;">+ Deploy Server</button>
+    </div>
     <div class="grid" id="cardsContainer"></div>
   </div>
 
   <div class="container" id="serverView">
-    <div class="header-row">
-      <div class="hleft">
-        <h1 id="srvHeader">SERVER</h1>
-        <div class="muted" id="srvSub">Manage your server</div>
+    
+    <div class="action-bar">
+      <button id="btnStart" class="btn-act start" onclick="srvAction('start')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg> START
+      </button>
+      <button class="btn-act stop" onclick="srvAction('stop')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect></svg> STOP
+      </button>
+      <button class="btn-act restart" onclick="srvAction('restart')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg> RESTART
+      </button>
+      <button class="btn-act clear" onclick="apiClearLogs()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg> CLEAR
+      </button>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" id="tabConsole" onclick="switchTab('console')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
+        Console
+      </button>
+      <button class="tab" id="tabFiles" onclick="switchTab('files')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+        Files
+      </button>
+      <button class="tab" id="tabStartup" onclick="switchTab('startup')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"></path><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"></path></svg>
+        Startup
+      </button>
+    </div>
+
+    <div class="grid-layout" id="viewConsole">
+      <div class="terminal-wrapper">
+        <div class="console" id="logOut">Waiting for daemon...</div>
+        <div class="cmd-box">
+          <span class="prompt">$</span>
+          <input type="text" id="cmdInput" placeholder="Type command..." autocomplete="off" onkeydown="if(event.key === 'Enter') sendInteractiveCmd()">
+          <button class="btn-send" onclick="sendInteractiveCmd()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+            SEND
+          </button>
+        </div>
       </div>
-      <div class="tabs">
-        <button class="tab active" id="tabConsole" onclick="switchTab('console')">Console Log</button>
-        <button class="tab" id="tabFiles" onclick="switchTab('files')">File System</button>
+      
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg> ADDRESS</div>
+          <div class="val" id="ipTxt">Initializing...</div>
+        </div>
+        <div class="stat-card">
+          <div class="label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg> STATUS</div>
+          <div class="val" id="statusTxt">Offline</div>
+        </div>
+        <div class="stat-card">
+          <div class="label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="14" x2="23" y2="14"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="14" x2="4" y2="14"></line></svg> RAM USAGE</div>
+          <div class="val" id="memTxt">0 MB</div>
+        </div>
+        <div class="stat-card">
+          <div class="label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> UPTIME</div>
+          <div class="val" id="uptimeTxt">Offline</div>
+        </div>
       </div>
     </div>
 
-    <div class="panel" id="viewConsole">
-      <div class="grid-2">
-        <div style="display: flex; flex-direction: column; min-width: 0;">
-          <div class="console-header">
-            <span>TERMINAL OUTPUT</span>
-            <button class="btn btn-mini" onclick="apiClearLogs()">🗑️ Clear Logs</button>
-          </div>
-          <div class="console" id="logOut">Waiting for daemon...</div>
-        </div>
-        
-        <div class="side">
-          <button id="btnStart" class="btn-block primary" onclick="srvAction('start')">START</button>
-          <button class="btn-block" onclick="srvAction('restart')">RESTART</button>
-          <button class="btn-block danger" onclick="srvAction('stop')">OFFLINE</button>
-
-          <div class="stat"><div class="ico">⚡</div><div style="width:100%"><small>STATUS</small><b id="statusTxt">Offline</b></div></div>
-          <div class="stat"><div class="ico">🧠</div><div style="width:100%"><small>RAM USAGE</small><b id="memTxt">0 MB</b></div></div>
-          <div class="stat"><div class="ico">💿</div><div style="width:100%"><small>SETUP RUNNING FILE</small><b id="mainFileTxt" onclick="changeStartup()">Click to config</b></div></div>
-          <div class="stat"><div class="ico">📡</div><div style="width:100%"><small>NETWORK IP</small><b id="ipTxt">0.0.0.0</b></div></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="panel" id="viewFiles" style="display:none">
-      <div class="fm-top">
-        <div>
-          <div style="font-weight:700;font-size:18px;color:#fff;">Workspace</div>
+    <div class="grid-layout" id="viewFiles" style="display:none">
+      <div class="table-wrapper">
+        <div class="fm-top">
           <div class="path" id="pathBar"></div>
+          <div class="actions">
+            <button id="btnBack" class="btn" onclick="goUp()" style="display:none">⬅ Back</button>
+            <button class="btn" onclick="newFolder()">📁 New Folder</button>
+            <button class="btn btn-primary" onclick="document.getElementById('uplFiles').click()">Upload File</button>
+            <button class="btn btn-primary" onclick="document.getElementById('uplFolder').click()">Upload Dir</button>
+          </div>
         </div>
-        <div class="actions" style="margin-top:12px;">
-          <button id="btnBack" class="btn btn-mini" onclick="goUp()" style="display:none">⬅ Return</button>
-          <button class="btn btn-mini" onclick="newFolder()">📁 New Folder</button>
-          <button class="btn btn-mini btn-primary" onclick="document.getElementById('uplFiles').click()">Upload Files</button>
-          <button class="btn btn-mini" onclick="document.getElementById('uplFolder').click()">Upload Dir</button>
-        </div>
+        <table class="table">
+          <thead><tr><th>Filename</th><th>Size</th><th style="text-align:right">Actions</th></tr></thead>
+          <tbody id="fileList"></tbody>
+        </table>
       </div>
-
       <input type="file" id="uplFiles" multiple hidden onchange="doUploadFiles(this)">
       <input type="file" id="uplFolder" webkitdirectory directory multiple hidden onchange="doUploadFolder(this)">
+    </div>
 
-      <table class="table">
-        <thead><tr><th>Filename</th><th>Size</th><th style="text-align:right">Actions</th></tr></thead>
-        <tbody id="fileList"></tbody>
-      </table>
+    <div class="grid-layout" id="viewStartup" style="display:none">
+      <div class="table-wrapper" style="padding: 24px; background: var(--bg1); border-radius: var(--radius-sm); border: 1px solid var(--border);">
+        <h3 style="margin-top:0; color:#fff; font-size:16px;">Startup Configuration</h3>
+        <p style="color:var(--muted); font-size:13px; margin-bottom:20px;">Set the main execution file for your server. This file will be triggered when you press Start.</p>
+        
+        <label style="display:block; color:var(--muted); font-size:11px; font-weight:700; margin-bottom:8px; text-transform:uppercase;">Startup File</label>
+        <div style="display:flex; gap:12px; flex-wrap:wrap;">
+          <input type="text" id="startupInput" placeholder="e.g. main.py" style="flex:1; min-width:200px; padding:12px 16px; border-radius:6px; border:1px solid rgba(255,255,255,0.1); background:rgba(0,0,0,0.2); color:#fff; font-family:'JetBrains Mono', monospace; font-size:13px; outline:none;">
+          <button class="btn btn-primary" onclick="saveStartupTab()" style="padding:12px 24px;">Save Configuration</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -294,9 +288,9 @@
     <div class="modal">
       <h3 id="mTitle">Title</h3>
       <input id="mIn" autocomplete="off" />
-      <div class="actions" style="justify-content:flex-end;margin-top:20px; display:flex;">
+      <div class="actions" style="justify-content:flex-end;margin-top:20px;">
         <button class="btn" onclick="closeM()">Cancel</button>
-        <button id="mConfirm" class="btn btn-primary">Execute</button>
+        <button id="mConfirm" class="btn btn-primary">Submit</button>
       </div>
     </div>
   </div>
@@ -308,7 +302,6 @@
   function isAuthPage(){ return location.pathname.startsWith('/login') || location.pathname.startsWith('/create'); }
   function safeRedirect(url){ if (!isAuthPage()) location.href = url; }
 
-  // ── Toast notification (replaces alert) ──────────────────────────────────
   function showToast(msg, type = 'info') {
     let container = document.getElementById('toastContainer');
     if (!container) {
@@ -317,27 +310,26 @@
       container.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:10px;max-width:360px;';
       document.body.appendChild(container);
     }
-    const colors = { success: '#10b981', danger: '#ef4444', warn: '#f59e0b', info: '#06b6d4' };
+    const colors = { success: '#10b981', danger: '#ef4444', warn: '#f59e0b', info: '#3b82f6' };
     const icons  = { success: '✅', danger: '❌', warn: '⚠️', info: 'ℹ️' };
     const t = document.createElement('div');
-    t.style.cssText = `background:#0f172a;border:1px solid ${colors[type]||colors.info};color:#f8fafc;padding:14px 18px;border-radius:12px;font-size:14px;font-family:inherit;box-shadow:0 8px 24px rgba(0,0,0,0.5);display:flex;align-items:flex-start;gap:10px;animation:fadeIn 0.25s ease;`;
-    t.innerHTML = `<span style="font-size:18px;flex-shrink:0">${icons[type]||icons.info}</span><span style="flex:1;line-height:1.5">${msg}</span><span onclick="this.parentElement.remove()" style="cursor:pointer;color:#64748b;font-size:18px;margin-left:6px;flex-shrink:0">×</span>`;
+    t.style.cssText = `background:#151822;border:1px solid ${colors[type]||colors.info};color:#f8fafc;padding:12px 16px;border-radius:8px;font-size:13px;font-family:inherit;box-shadow:0 8px 24px rgba(0,0,0,0.6);display:flex;align-items:flex-start;gap:10px;animation:fadeIn 0.2s ease;`;
+    t.innerHTML = `<span style="font-size:16px;flex-shrink:0">${icons[type]||icons.info}</span><span style="flex:1;line-height:1.5">${msg}</span><span onclick="this.parentElement.remove()" style="cursor:pointer;color:#64748b;font-size:18px;margin-left:6px;flex-shrink:0">×</span>`;
     container.appendChild(t);
     setTimeout(() => { try { t.remove(); } catch(e){} }, 4500);
   }
 
-  // ── Confirm modal (replaces confirm()) ────────────────────────────────────
   function showConfirm(msg, onYes) {
     let bd = document.getElementById('confirmBackdrop');
     if (!bd) {
       bd = document.createElement('div');
       bd.id = 'confirmBackdrop';
       bd.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:200;padding:20px;';
-      bd.innerHTML = `<div style="width:100%;max-width:360px;background:#0f172a;border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:28px;animation:fadeIn 0.2s ease;">
-        <p id="confirmMsg" style="margin:0 0 24px;font-size:15px;color:#f8fafc;line-height:1.6;"></p>
+      bd.innerHTML = `<div style="width:100%;max-width:340px;background:var(--bg1);border:1px solid var(--border);border-radius:12px;padding:24px;animation:fadeIn 0.2s ease;">
+        <p id="confirmMsg" style="margin:0 0 20px;font-size:14px;color:#f8fafc;line-height:1.6;"></p>
         <div style="display:flex;gap:10px;justify-content:flex-end;">
-          <button id="confirmNo"  style="padding:10px 22px;border-radius:8px;border:1px solid rgba(255,255,255,0.15);background:transparent;color:#94a3b8;font-family:inherit;font-weight:600;cursor:pointer;">Cancel</button>
-          <button id="confirmYes" style="padding:10px 22px;border-radius:8px;border:none;background:#ef4444;color:#fff;font-family:inherit;font-weight:600;cursor:pointer;">Confirm</button>
+          <button id="confirmNo"  style="padding:8px 16px;border-radius:6px;border:1px solid var(--border);background:transparent;color:#94a3b8;font-family:inherit;font-weight:600;font-size:12px;cursor:pointer;">Cancel</button>
+          <button id="confirmYes" style="padding:8px 16px;border-radius:6px;border:none;background:#ef4444;color:#fff;font-family:inherit;font-weight:600;font-size:12px;cursor:pointer;">Confirm</button>
         </div></div>`;
       document.body.appendChild(bd);
       document.getElementById('confirmNo').onclick = () => { bd.style.display = 'none'; };
@@ -357,15 +349,12 @@
 
   async function loadPythonHost(){
     const ipTxt = document.getElementById('pyHostTxt');
-    const port = location.port || 8008;
     try{
       const r = await fetch('/servers');
       if (r.redirected){ safeRedirect(r.url); return; }
-      const d = await r.json();
-      // Hiện IP:port ngay, không cần fetch stats server đầu tiên
-      ipTxt.textContent = `Node: ${location.hostname}:${port}`;
+      ipTxt.textContent = `Node: ${location.host}`;
     }catch(e){
-      ipTxt.textContent = `Node: ${location.hostname}:${port}`;
+      ipTxt.textContent = `Node: ${location.host}`;
     }
   }
 
@@ -377,7 +366,7 @@
       const d = await r.json();
       cont.innerHTML = '';
 
-      fetch('/admin').then(res=>{ if(!res.redirected && res.status===200) document.getElementById('adminBtn').style.display='inline-block'; }).catch(()=>{});
+      fetch('/admin').then(res=>{ if(!res.redirected && res.status===200) document.getElementById('adminBtn').style.display='inline-flex'; }).catch(()=>{});
 
       const list = d.servers || [];
       if (list.length === 0) {
@@ -401,7 +390,6 @@
           <div class="srv-sub">${escapeHtml(s.subtitle || '')}</div>
           <div class="pill ${cls}"><span class="dot"></span>${label}</div>
         `;
-        div.onmousemove = e => { const rect = div.getBoundingClientRect(); div.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`); div.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`); };
         div.onclick = () => openServer(s);
         cont.appendChild(div);
       });
@@ -416,11 +404,18 @@
     currentSrv = s; currentPath = '';
     document.getElementById('homeView').style.display = 'none';
     document.getElementById('serverView').style.display = 'block';
-    document.getElementById('homeBtn').style.display = 'inline-block';
-    document.getElementById('newBtn').style.display = 'none';
-    document.getElementById('srvHeader').textContent = s.title;
-    document.getElementById('srvSub').textContent = s.subtitle || '';
-    document.getElementById('mainFileTxt').textContent = s.startup_file || "Click to config";
+    document.getElementById('homeBtn').style.display = 'inline-flex';
+    
+    // Đã comment lại 2 dòng gây lỗi
+    // document.getElementById('srvHeader').textContent = s.title;
+    // document.getElementById('srvSub').textContent = s.subtitle || '';
+    
+    document.getElementById('startupInput').value = s.startup_file || "";
+    
+    const currentHost = location.host;
+    const currentProtocol = location.protocol;
+    document.getElementById('ipTxt').innerHTML = `<a href="${currentProtocol}//${currentHost}" target="_blank" style="color:var(--accent); text-decoration:none;">${currentHost}</a>`;
+    
     switchTab('console');
   }
 
@@ -428,23 +423,25 @@
     document.getElementById('homeView').style.display='block';
     document.getElementById('serverView').style.display='none';
     document.getElementById('homeBtn').style.display='none';
-    document.getElementById('newBtn').style.display='inline-block';
     clearInterval(poll); loadServers();
   }
 
   function switchTab(t) {
     document.getElementById('tabConsole').classList.toggle('active', t==='console');
     document.getElementById('tabFiles').classList.toggle('active', t==='files');
-    document.getElementById('viewConsole').style.display = t === 'console' ? 'block' : 'none';
-    document.getElementById('viewFiles').style.display = t === 'files' ? 'block' : 'none';
-    if(t === 'console') startPolling(); else { clearInterval(poll); loadFiles(); }
+    document.getElementById('tabStartup').classList.toggle('active', t==='startup');
+    
+    document.getElementById('viewConsole').style.display = t === 'console' ? 'flex' : 'none';
+    document.getElementById('viewFiles').style.display = t === 'files' ? 'flex' : 'none';
+    document.getElementById('viewStartup').style.display = t === 'startup' ? 'flex' : 'none';
+    
+    if(t === 'console') startPolling(); else { clearInterval(poll); if(t==='files') loadFiles(); }
   }
 
-  // ── Polling with Page Visibility API ─────────────────────────────────────
   async function startPolling() {
     if(poll) clearInterval(poll);
     const fn = async () => {
-      if (document.hidden) return;   // skip when tab is not visible
+      if (document.hidden) return; 
       try {
         const r = await fetch(`/server/stats/${encodeURIComponent(currentSrv.key)}`);
         if (r.redirected){ safeRedirect(r.url); return; }
@@ -454,9 +451,22 @@
         const isAtBottom = logArea.scrollHeight - logArea.clientHeight <= logArea.scrollTop + 50;
 
         logArea.textContent = d.logs || "No logs captured...";
-        document.getElementById('statusTxt').textContent = d.status || 'Offline';
+        
+        const st = d.status || 'Offline';
+        const stLower = st.toLowerCase();
+        let color = '#94a3b8';
+        if (stLower === 'running') color = '#10b981';
+        else if (stLower === 'installing' || stLower === 'starting') color = '#f59e0b';
+        else if (stLower === 'banned') color = '#ef4444';
+        
+        document.getElementById('statusTxt').innerHTML = `<span style="color: ${color};">${st}</span>`;
         document.getElementById('memTxt').textContent = d.mem || '0 MB';
-        document.getElementById('ipTxt').textContent = d.ip || '';
+        document.getElementById('uptimeTxt').textContent = d.uptime || 'Offline';
+
+        const currentHost = location.host;
+        const currentProtocol = location.protocol;
+        document.getElementById('ipTxt').innerHTML = `<a href="${currentProtocol}//${currentHost}" target="_blank" style="color:var(--accent); text-decoration:none;">${currentHost}</a>`;
+        
         const running = (d.status === "Running" || d.status === "Installing" || d.status === "Starting");
         document.getElementById('btnStart').disabled = running;
 
@@ -479,12 +489,24 @@
       }
     });
   }
+  
+  function sendInteractiveCmd() {
+    const input = document.getElementById('cmdInput');
+    const cmd = input.value.trim();
+    if(!cmd) return;
+    showToast(`Command sent: ${escapeHtml(cmd)} <br><small><i>Interactive terminal is currently in visual-only mode.</i></small>`, "info");
+    input.value = "";
+  }
 
-  function changeStartup() {
-    openM("Set Entry Point (e.g., main.py)", currentSrv.startup_file || "", async (v) => {
+  async function saveStartupTab() {
+    const v = document.getElementById('startupInput').value.trim();
+    try {
       await fetch(`/server/set-startup/${encodeURIComponent(currentSrv.key)}`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({file:v}) });
-      currentSrv.startup_file = v; document.getElementById('mainFileTxt').textContent = v || "Click to config"; closeM();
-    });
+      currentSrv.startup_file = v; 
+      showToast("Startup configuration saved ✅", "success");
+    } catch(e) {
+      showToast("Failed to save startup configuration.", "danger");
+    }
   }
 
   async function loadFiles() {
@@ -493,19 +515,23 @@
     const data = await r.json();
     if (!data.success) { currentPath = ''; return loadFiles(); }
 
-    document.getElementById("btnBack").style.display = (currentPath && currentPath.length > 0) ? "inline-block" : "none";
+    document.getElementById("btnBack").style.display = (currentPath && currentPath.length > 0) ? "inline-flex" : "none";
     const parts = (data.path || '').split('/').filter(Boolean);
     let acc = ''; const crumbs = [`<span class="crumb"><a href="javascript:void(0)" onclick="jumpPath('')">~</a></span>`];
     for (const p of parts) { acc = acc ? (acc + '/' + p) : p; crumbs.push(`<span class="sep">/</span><span class="crumb"><a href="javascript:void(0)" onclick="jumpPath('${escapeAttr(acc)}')">${escapeHtml(p)}</a></span>`); }
     document.getElementById('pathBar').innerHTML = crumbs.join('');
     const rows = [];
+    
+    const folderIcon = `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"></path></svg>`;
+    const fileIcon = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>`;
+
     for (const d of (data.dirs || [])) {
       const name = d.name;
-      rows.push(`<tr><td><span class="name-link" onclick="openFolder('${escapeAttr(name)}')">📁 ${escapeHtml(name)}</span></td><td style="color:var(--muted); font-size:12px;">Folder</td><td class="row-actions"><button class="btn btn-mini" onclick="openFolder('${escapeAttr(name)}')">Open</button> <button class="btn btn-mini" onclick="renameDir('${escapeAttr(name)}')">Ren</button> <button class="btn btn-mini btn-danger" onclick="deleteDir('${escapeAttr(name)}')">Del</button></td></tr>`);
+      rows.push(`<tr><td><span class="name-link" onclick="openFolder('${escapeAttr(name)}')">${folderIcon} ${escapeHtml(name)}</span></td><td style="color:var(--muted); font-size:12px;">Folder</td><td class="row-actions"><button class="btn btn-mini" onclick="renameDir('${escapeAttr(name)}')">Ren</button> <button class="btn btn-mini btn-danger" onclick="deleteDir('${escapeAttr(name)}')">Del</button></td></tr>`);
     }
     for (const f of (data.files || [])) {
       const relFile = currentPath ? `${currentPath}/${f.name}` : f.name;
-      rows.push(`<tr><td><span class="name-link" onclick="openEditor('${escapeAttr(relFile)}')">📄 ${escapeHtml(f.name)}</span></td><td style="color:var(--muted); font-size:12px;">${escapeHtml(f.size || '')}</td><td class="row-actions"><button class="btn btn-mini" onclick="renameFilePrompt('${escapeAttr(f.name)}')">Ren</button> <button class="btn btn-mini btn-danger" onclick="deleteFilePrompt('${escapeAttr(f.name)}')">Del</button></td></tr>`);
+      rows.push(`<tr><td><span class="name-link" onclick="openEditor('${escapeAttr(relFile)}')">${fileIcon} ${escapeHtml(f.name)}</span></td><td style="color:var(--muted); font-size:12px;">${escapeHtml(f.size || '')}</td><td class="row-actions"><button class="btn btn-mini" onclick="renameFilePrompt('${escapeAttr(f.name)}')">Ren</button> <button class="btn btn-mini btn-danger" onclick="deleteFilePrompt('${escapeAttr(f.name)}')">Del</button></td></tr>`);
     }
     document.getElementById('fileList').innerHTML = rows.join('');
   }
@@ -570,7 +596,7 @@
   });
 
   function escapeHtml(s){ return (s||'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'","&#039;"); }
-  function escapeAttr(s){ return (s||'').replaceAll('\\','\\\\').replaceAll('"','&quot;').replaceAll("'","&#039;"); }
+  function escapeAttr(s){ return escapeHtml(s).split('\\').join('\\\\'); }
 
   document.addEventListener('DOMContentLoaded', ()=>{ loadServers(); loadPythonHost(); });
 </script>
